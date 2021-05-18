@@ -1,0 +1,84 @@
+_schema-version: "3.2"
+ID: second-test
+version: 0.0.1
+modules:
+- name: second-test-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: second-test-destination-service
+    parameters:
+      content-target: true
+  - name: second-test_html_repo_host
+    parameters:
+      service-key:
+        name: second-test_html_repo_host-key
+  - name: uaa_second-test
+    parameters:
+      service-key:
+        name: uaa_second-test-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: ui5test_second_test_html_repo_host
+          ServiceInstanceName: second-test-html5-app-host-service
+          ServiceKeyName: second-test_html_repo_host-key
+          sap.cloud.service: ui5test
+        - Authentication: OAuth2UserTokenExchange
+          Name: ui5test_uaa_second_test
+          ServiceInstanceName: second-test-xsuaa-service
+          ServiceKeyName: uaa_second-test-key
+          sap.cloud.service: ui5test
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: second-test_ui_deployer
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: second-test_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - HTML5Module-content.zip
+      name: HTML5Module
+      target-path: resources/
+- name: HTML5Module
+  type: html5
+  path: HTML5Module
+  build-parameters:
+    builder: custom
+    commands:
+    - npm run build
+    supported-platforms: []
+resources:
+- name: second-test-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      version: 1.0.0
+    service: destination
+    service-name: second-test-destination-service
+    service-plan: lite
+- name: second-test_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: second-test-html5-app-host-service
+    service-plan: app-host
+- name: uaa_second-test
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: second-test-xsuaa-service
+    service-plan: application
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install
