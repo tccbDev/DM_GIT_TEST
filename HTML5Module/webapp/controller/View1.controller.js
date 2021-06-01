@@ -13,6 +13,7 @@ sap.ui.define([
 
                 alert('hello world');
                 console.log('2 nd modif ');
+                console.log('KPI_Dashbord');
 
 			}
 		});
