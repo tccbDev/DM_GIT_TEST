@@ -11,6 +11,8 @@ sap.ui.define([
 		return Controller.extend("demo.HTML5Module.controller.View1", {
 			onInit: function () {
 
+                alert('hello world');
+
 			}
 		});
 	});
