@@ -12,6 +12,7 @@ sap.ui.define([
 			onInit: function () {
 
                 alert('hello world');
+                console.log('2 nd modif ');
 
 			}
 		});
